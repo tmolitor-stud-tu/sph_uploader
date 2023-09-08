@@ -1,0 +1,48 @@
+{
+    "version": 1,
+    "disable_existing_loggers": false,
+    
+    "formatters": {
+        "simple": {
+            "format": "%(asctime)s [%(levelname)-7s] %(name)s {%(threadName)s} %(filename)s:%(lineno)d: %(message)s",
+            "color": true
+        }
+    },
+    
+    "handlers": {
+        "stderr": {
+            "class": "logging.StreamHandler",
+            "level": "DEBUG",
+            "formatter": "simple"
+        },
+        "debugFile": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "DEBUG",
+            "formatter": "simple",
+            "filename": "log/debug.log",
+            "mode": "a",
+            "maxBytes": 1048576,
+            "backupCount": 4
+        },
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "INFO",
+            "formatter": "simple",
+            "filename": "log/info.log",
+            "mode": "a",
+            "maxBytes": 1048576,
+            "backupCount": 4
+        },
+        "ignore": {
+            "class": "logging.NullHandler",
+            "level": "DEBUG"
+        }
+    },
+    
+    "loggers": {
+        "": {
+            "level": "DEBUG",
+            "handlers": ["stderr", "debugFile", "file"]
+        }
+    }
+}
