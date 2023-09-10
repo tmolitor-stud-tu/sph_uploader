@@ -32,7 +32,7 @@ logger_config["handlers"]["file"]["filename"] = os.path.join(platformdirs.user_l
 logger_config["handlers"]["stderr"]["level"] = args.log
 logging.config.dictConfig(logger_config)
 logger = logging.getLogger(__name__)
-logger.info("Logger configured via '%s'..." % logger_config_file)
+logger.info("Logger configured via '%s', logging to '%s'..." % (logger_config_file, platformdirs.user_log_dir(*PLATFORM_ARGS)))
 
 
 def sigint_handler(sig, frame):
