@@ -1,0 +1,1 @@
+PLATFORM_ARGS = ("sph_uploader", "tmolitor")
