@@ -5,10 +5,9 @@ from datetime import timezone
 from datetime import timedelta
 from collections import defaultdict
 import json
-import platformdirs
 from PyQt5 import QtCore
 
-from utils import widget_name, PLATFORM_ARGS
+from utils import widget_name, paths
 
 import logging
 logger = logging.getLogger(__name__)
@@ -62,7 +61,7 @@ class SettingsSingleton:
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(SettingsSingleton, cls).__new__(cls)
-            cls._instance.path = os.path.join(platformdirs.user_data_dir(*PLATFORM_ARGS, roaming=True), "conf", "settings.json")
+            cls._instance.path = os.path.join(paths.user_data_dir(), "settings.json")
             logger.info("Settings will be stored at '%s'..." % cls._instance.path)
             cls._instance._load()
             logger.debug("Instanciated SettingsSingleton...")
