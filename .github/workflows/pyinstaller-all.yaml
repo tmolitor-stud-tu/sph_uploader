@@ -28,7 +28,7 @@ jobs:
                 brew install create-dmg &&
                 mkdir -p dmg &&
                 cp -vr "sph_uploader.app" dmg/ &&
-                create-dmg --volname "sph_uploader" --window-pos 200 120 --window-size 600 300 --icon-size 100 --icon "sph_uploader.app" 175 120 --hide-extension "sph_uploader.app" --app-drop-link 425 120 "sph_uploader.dmg" "./dmg/"
+                create-dmg --volname "sph_uploader" --volicon sph_uploader.app/Contents/Resources/generated-* --window-pos 200 120 --window-size 600 300 --icon-size 100 --icon "sph_uploader.app" 175 120 --hide-extension "sph_uploader.app" --app-drop-link 425 120 "sph_uploader.dmg" "./dmg/"
             OUT_FILE_NAME: sph_uploader.dmg
             ASSET_MIME: application/binary
           - os: windows-latest
