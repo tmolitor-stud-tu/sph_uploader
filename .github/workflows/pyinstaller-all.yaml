@@ -54,6 +54,7 @@ jobs:
         pip install --upgrade pyinstaller
         pip install --upgrade pyinstaller-hooks-contrib
         pip install --upgrade Pillow
+        pip install --upgrade tk
         pip install --upgrade -r src/requirements.txt        
     - name: Build with pyinstaller for ${{matrix.TARGET}}
       run: ${{matrix.CMD_BUILD}}
