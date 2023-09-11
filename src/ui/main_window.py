@@ -6,7 +6,7 @@ import re
 from PyQt5 import QtWidgets, uic, QtGui, QtCore
 
 from .about_dialog import AboutDialog
-from utils import catch_exceptions, display_exceptions, widget_name
+from utils import catch_exceptions, display_exceptions, widget_name, paths
 from storage import SettingsSingleton, GPU014, PDF
 from net import SPH, Web
 
@@ -20,7 +20,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         # load qt ui definition file from same directory and named exactly like this file, but having extension ".ui"
         uic.loadUi(os.path.join(os.path.dirname(__file__), os.path.splitext(__file__)[0]+".ui"), self)
-        self.setWindowIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__), "..", "art", "icon.png")))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(paths.get_art_path(), "icon.png")))
         
         # load ui state
         SettingsSingleton().restore_geometry(self)
