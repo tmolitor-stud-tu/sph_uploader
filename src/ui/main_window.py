@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class MainWindow(QtWidgets.QMainWindow):
     @catch_exceptions(logger=logger)
-    def __init__(self):
+    def __init__(self, app):
         super().__init__()
         
         # load qt ui definition file from same directory and named exactly like this file, but having extension ".ui"
@@ -77,6 +77,17 @@ class MainWindow(QtWidgets.QMainWindow):
         # create timer
         self._configure_sph_timer()
         self._configure_web_timer()
+        
+        # handle app messages (single app mode)
+        app.messageAvailable.connect(self.handle_message)
+    
+    @catch_exceptions(logger=logger)
+    def handle_message(self, message):
+        if message == "show":
+            logger.info("Received show message, displaying main window...")
+            self.show()
+        else:
+            logger.error("Received unsupported message: '%s'!" % message)
     
     @catch_exceptions(logger=logger)
     def closeEvent(self, event):

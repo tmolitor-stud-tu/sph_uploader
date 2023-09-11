@@ -5,7 +5,7 @@ import os
 import signal
 import shutil
 import argparse
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore, QtNetwork
 
 from utils import paths
 
@@ -39,23 +39,76 @@ def sigint_handler(sig, frame):
     os._exit(1)
 signal.signal(signal.SIGINT, sigint_handler)
 
+# needed to properly bind our signal
+# see https://stackoverflow.com/a/8795563
+class Application(QtWidgets.QApplication):
+    messageAvailable = QtCore.pyqtSignal(object)
+    
+    def __init__(self, argv, already_running):
+        super().__init__(argv)
+        self.socket_name = "sph_uploader_single_app_socket"
+        if not already_running:
+            logger.info("We are the first launch, starting local server...")
+            self.server = QtNetwork.QLocalServer(self)
+            self.server.newConnection.connect(self._handle_message)
+            self.server.listen(self.socket_name)
+            if not self.server.isListening():
+                raise RuntimeError("Could not start local server on '%s': %s" % (self.socket_name, self.server.errorString()))
+        
+    def send_message(self, message):
+        socket = QtNetwork.QLocalSocket(self)
+        socket.connectToServer(self.socket_name, QtCore.QIODevice.WriteOnly)
+        if not socket.waitForConnected(1000):
+            raise RuntimeError("Failed to wait for connection on socket: %s" % socket.errorString())
+        if not isinstance(message, bytes):
+            message = message.encode("utf-8")
+        socket.write(message)
+        if not socket.waitForBytesWritten(1000):
+            raise RuntimeError("Failed to wait for bytes on socket: %s" % socket.errorString())
+        socket.disconnectFromServer()
+    
+    def _handle_message(self):
+        logger.debug("Got new local connection...")
+        socket = self.server.nextPendingConnection()
+        logger.debug("Next connection: %s" % str(socket))
+        if socket and socket.waitForReadyRead(100):
+            msg = socket.readAll().data().decode('utf-8')
+            logger.info("Got local message: '%s'..." % msg)
+            self.messageAvailable.emit(msg)
+            socket.disconnectFromServer()
+        else:
+            logger.error("Failed to read from message socket: %s" % socket.errorString())
+
+# ignore pyinstaller splashscreen errors
+try:
+    import pyi_splash
+    pyi_splash.close()
+except:
+    pass
+
 try:
     # initialize qt application
-    app = QtWidgets.QApplication(sys.argv)
-    from ui import TrayIcon, MainWindow
-    window = MainWindow()
-    tray_icon = TrayIcon(window)
-    window.tray_icon = tray_icon
-    
-    # ignore pyinstaller splashscreen errors
-    try:
-        import pyi_splash
-        pyi_splash.close()
-    except:
-        pass
-    
-    # run qt mainloop
-    app.exec_()
-except:
+    lockfile = QtCore.QLockFile(os.path.join(paths.user_data_dir(), "lockfile.lock"))
+    already_running = not lockfile.tryLock(100)
+    app = Application(sys.argv, already_running)
+    if not already_running:
+        logger.info("Application not running, starting up gui...")
+        
+        # initialize gui
+        from ui import TrayIcon, MainWindow
+        window = MainWindow(app)
+        tray_icon = TrayIcon(window)
+        window.tray_icon = tray_icon
+        
+        # run qt mainloop
+        app.exec_()
+    else:
+        logger.info("Application already running, sending it a message to bring main window to foreground...")
+        app.send_message("show")
+except Exception as err:
     logger.exception("Catched top level exception!")
+    QtWidgets.QMessageBox.critical(None, "Fatal Top-Level Error!", "%s: %s" % (str(type(err).__name__), str(err)))
+except:
+    logger.exception("Catched unknown top level exception!")
+    QtWidgets.QMessageBox.critical(None, "Fatal Top-Level Error!", "Catched unknown top level exception!")
 sys.exit(0)
