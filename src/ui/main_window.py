@@ -51,6 +51,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         # connect ui element signals
         self.uiAction_close.triggered.connect(self.action_close)
+        self.uiAction_quit.triggered.connect(self.action_quit)
         self.uiAction_about.triggered.connect(self.action_about)
         self.uiTabWidget_mainTabs.currentChanged.connect(self.tab_changed)
         
@@ -81,6 +82,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def closeEvent(self, event):
         logger.info("Closing main window...")
         self._closing()
+        self.hide()     # needed for isHidden() and isVisible() to return correct values
+        self.tray_icon.update_menu()
         QtWidgets.QMainWindow.closeEvent(self, event)
     
     @catch_exceptions(logger=logger)
@@ -89,10 +92,16 @@ class MainWindow(QtWidgets.QMainWindow):
     
     @catch_exceptions(logger=logger)
     def action_close(self, *args):
-        QtWidgets.QApplication.closeAllWindows()
+        self.close()
+    
+    @catch_exceptions(logger=logger)
+    def action_quit(self, *args):
+        logger.info("Closing application...")
+        QtWidgets.QApplication.quit()
     
     @catch_exceptions(logger=logger)
     def action_about(self, *args):
+        logger.info("Showing About Dialog...")
         about = AboutDialog()
         about.show()
         about.exec_()
@@ -147,28 +156,12 @@ class MainWindow(QtWidgets.QMainWindow):
     @catch_exceptions(logger=logger)
     def sph_force_upload(self, *args):
         logger.info("Forcing SPH upload...")
-        self.uiStatusbar_statusbar.showMessage("Currently uploading GPU014 (manually triggered)...")
-        QtWidgets.QApplication.processEvents()          # force ui redraw and events processing
-        try:
-            SPH().upload(GPU014(SettingsSingleton().get_sph("file"), set(SettingsSingleton().get_sph("filter")), SettingsSingleton()["supportedFilters"]), True)
-        except Exception as err:
-            logger.exception("Exception while uploading!")
-            QtWidgets.QMessageBox.warning(None, str(type(err).__name__), str(err))
-        self.uiStatusbar_statusbar.showMessage("")
-        self._update_sph_stats()
+        self._trigger_sph_upload(True)
     
     @catch_exceptions(logger=logger)
     def sph_timer_triggered(self, *args):
-        logger.info("Timer starting SPH upload...")
-        self.uiStatusbar_statusbar.showMessage("Currently uploading GPU014 (timer triggered)...")
-        QtWidgets.QApplication.processEvents()          # force ui redraw and events processing
-        try:
-            SPH().upload(GPU014(SettingsSingleton().get_sph("file"), set(SettingsSingleton().get_sph("filter")), SettingsSingleton()["supportedFilters"]), False)
-        except Exception as err:
-            logger.exception("Exception while uploading!")
-            QtWidgets.QMessageBox.warning(None, str(type(err).__name__), str(err))
-        self.uiStatusbar_statusbar.showMessage("")
-        self._update_sph_stats()
+        logger.info("Timer triggered SPH upload...")
+        self._trigger_sph_upload(False)
     
     # *** Web ***
     
@@ -211,39 +204,47 @@ class MainWindow(QtWidgets.QMainWindow):
     @catch_exceptions(logger=logger)
     def web_force_upload(self, *args):
         logger.info("Forcing web upload...")
-        self.uiStatusbar_statusbar.showMessage("Currently uploading PDFs (manually triggered)...")
-        QtWidgets.QApplication.processEvents()          # force ui redraw and events processing
-        try:
-            Web().upload(PDF(SettingsSingleton().get_web("dir")), True)
-        except Exception as err:
-            logger.exception("Exception while uploading!")
-            QtWidgets.QMessageBox.warning(None, str(type(err).__name__), str(err))
-        self.uiStatusbar_statusbar.showMessage("")
-        self._update_web_stats()
+        self._trigger_web_upload(True)
     
     @catch_exceptions(logger=logger)
     def web_timer_triggered(self, *args):
-        logger.info("Timer starting web upload...")
-        self.uiStatusbar_statusbar.showMessage("Currently uploading PDFs (timer triggered)...")
-        QtWidgets.QApplication.processEvents()          # force ui redraw and events processing
-        try:
-            Web().upload(PDF(SettingsSingleton().get_web("dir")), False)
-        except Exception as err:
-            logger.exception("Exception while uploading!")
-            QtWidgets.QMessageBox.warning(None, str(type(err).__name__), str(err))
-        self.uiStatusbar_statusbar.showMessage("")
-        self._update_web_stats()
+        logger.info("Timer triggered web upload...")
+        self._trigger_web_upload(False)
     
     # *** internals ***
     
     def _configure_sph_timer(self):
         if not hasattr(self, "sph_timer"):
+            logger.info("Creating web timer...")
             self.sph_timer = QtCore.QTimer()
             self.sph_timer.timeout.connect(self.sph_timer_triggered)
         if self.uiCheckBox_sphEnabled.isChecked():
             self.sph_timer.start(self.uiSpinBox_sphInterval.value() * 60 * 1000)    # the spinbox value is in minutes
         else:
             self.sph_timer.stop()
+    
+    def _trigger_sph_upload(self, force=False):
+        self.uiStatusbar_statusbar.showMessage("Lade GPU014 hoch (%s)..." % "ausgelöst durch Timer" if force else "manuell ausgelöst")
+        QtWidgets.QApplication.processEvents()          # force ui redraw and events processing
+        try:
+            SPH().upload(GPU014(SettingsSingleton().get_sph("file"), set(SettingsSingleton().get_sph("filter")), SettingsSingleton()["supportedFilters"]), force)
+            self.tray_icon.showMessage(
+                "GPU014 Upload",
+                "GPU014 Upload erfolgreich",
+                QtWidgets.QSystemTrayIcon.Information,
+                4000
+            )
+        except Exception as err:
+            logger.exception("Exception while uploading!")
+            self.tray_icon.showMessage(
+                "GPU014 Upload",
+                "GPU014 Upload fehlgeschlagen",
+                QtWidgets.QSystemTrayIcon.Warning,
+                4000
+            )
+            QtWidgets.QMessageBox.warning(None, str(type(err).__name__), str(err))
+        self.uiStatusbar_statusbar.showMessage("")
+        self._update_web_stats()
     
     def _update_sph_stats(self):
         stats = SPH.get_stats()
@@ -253,12 +254,36 @@ class MainWindow(QtWidgets.QMainWindow):
     
     def _configure_web_timer(self):
         if not hasattr(self, "web_timer"):
+            logger.info("Creating sph timer...")
             self.web_timer = QtCore.QTimer()
             self.web_timer.timeout.connect(self.web_timer_triggered)
         if self.uiCheckBox_webEnabled.isChecked():
             self.web_timer.start(self.uiSpinBox_webInterval.value() * 60 * 1000)    # the spinbox value is in minutes
         else:
             self.web_timer.stop()
+    
+    def _trigger_web_upload(self, force=False):
+        self.uiStatusbar_statusbar.showMessage("Lade PDFs hoch (%s)..." % "ausgelöst durch Timer" if force else "manuell ausgelöst")
+        QtWidgets.QApplication.processEvents()          # force ui redraw and events processing
+        try:
+            Web().upload(PDF(SettingsSingleton().get_web("dir")), force)
+            self.tray_icon.showMessage(
+                "PDF Upload",
+                "PDF Upload erfolgreich",
+                QtWidgets.QSystemTrayIcon.Information,
+                4000
+            )
+        except Exception as err:
+            logger.exception("Exception while uploading!")
+            self.tray_icon.showMessage(
+                "PDF Upload",
+                "PDF Upload fehlgeschlagen",
+                QtWidgets.QSystemTrayIcon.Warning,
+                4000
+            )
+            QtWidgets.QMessageBox.warning(None, str(type(err).__name__), str(err))
+        self.uiStatusbar_statusbar.showMessage("")
+        self._update_web_stats()
     
     def _update_web_stats(self):
         stats = Web.get_stats()

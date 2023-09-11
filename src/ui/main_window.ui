@@ -469,6 +469,7 @@ bei Veränderung:</string>
      <string>Datei</string>
     </property>
     <addaction name="uiAction_close"/>
+    <addaction name="uiAction_quit"/>
    </widget>
    <widget class="QMenu" name="menuHilfe">
     <property name="title">
@@ -482,7 +483,7 @@ bei Veränderung:</string>
   <widget class="QStatusBar" name="uiStatusbar_statusbar"/>
   <action name="uiAction_close">
    <property name="text">
-    <string>Beenden</string>
+    <string>Fenster Schließen</string>
    </property>
   </action>
   <action name="action_ber">
@@ -493,6 +494,11 @@ bei Veränderung:</string>
   <action name="uiAction_about">
    <property name="text">
     <string>Über</string>
+   </property>
+  </action>
+  <action name="uiAction_quit">
+   <property name="text">
+    <string>Beenden</string>
    </property>
   </action>
  </widget>

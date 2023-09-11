@@ -42,9 +42,10 @@ signal.signal(signal.SIGINT, sigint_handler)
 try:
     # initialize qt application
     app = QtWidgets.QApplication(sys.argv)
-    from ui import MainWindow
+    from ui import TrayIcon, MainWindow
     window = MainWindow()
-    window.show()
+    tray_icon = TrayIcon(window)
+    window.tray_icon = tray_icon
     
     # ignore pyinstaller splashscreen errors
     try:
