@@ -89,9 +89,7 @@ class MainWindow(QtWidgets.QMainWindow):
     
     @catch_exceptions(logger=logger)
     def action_close(self, *args):
-        logger.info("Closing application...")
-        self._closing()
-        QtWidgets.QApplication.quit()
+        QtWidgets.QApplication.closeAllWindows()
     
     @catch_exceptions(logger=logger)
     def action_about(self, *args):
