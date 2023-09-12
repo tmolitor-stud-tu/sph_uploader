@@ -1,3 +1,4 @@
+import chardet
 import csv
 import hashlib
 
@@ -35,8 +36,14 @@ class GPU014:
         self.data = [
             ["Datum", "Stunde", "AbsenterLehrer", "VertretenderLehrer", "Fach", "Vertretungsfach", "Raum", "Vertretungsraum", "Klassen", "TextZurVertretung", "Vertretungsklassen", "Art", "Vertretungsart", "LetzteAenderung"]
         ]
-        with open(file, newline='') as fp:
-            for row in csv.reader(fp, delimiter=";", quotechar='"'):
+        with open(file, "rb") as fp:
+            sniffdata = fp.read(10000)
+            chardet_result = chardet.detect(sniffdata)
+            dialect = csv.Sniffer().sniff(str(sniffdata, chardet_result["encoding"]))
+        logger.debug("Chardet result: %s" % str(chardet_result))
+        logger.debug("CSV Sniffer dialect: (delimiter='%s', quotechar='%s')" % (dialect.delimiter, dialect.quotechar))
+        with open(file, newline="", encoding=chardet_result["encoding"]) as fp:
+            for row in csv.reader(fp, dialect=dialect):
                 # filter anwenden
                 ignore = False
                 for f in filter:

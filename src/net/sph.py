@@ -48,7 +48,7 @@ class SPH(Base):
             "c": SettingsSingleton().get_sph("uploadKey"),
             "a": "untis-dif-manuell",
             "upload": "1",
-        }, files={"d": io.StringIO(data)})
+        }, files={"d": io.BytesIO(bytes(data, "ISO-8859-1"))})      # convert to ISO-8859-1 (needed by sph)
         if response.status_code != 200:
             self._report_http_error("Failed to upload Vertretungsplan", response.status_code, response.reason)
         result = response.text.split("|")
