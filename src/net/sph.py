@@ -19,12 +19,12 @@ class SPH(Base):
         
         if not force and hash == SettingsSingleton().get_sph("last_upload_hash"):
             logger.info("Hash of GPU014.TXT did not change and upload was not forced, doing nothing...")
-            return
+            return False
         if len(data.strip()) == 0:
             logger.info("Not uploading GPU014.TXT, file at '%s' empty!" % gpu.get_file())
             if force:
                 raise RuntimeError("Not uploading GPU014.TXT, file at '%s' empty!" % gpu.get_file())
-            return
+            return False
         
         type(self).UPLOAD_TRIES += 1
         logger.info("Locking SPH Vertretungsplan...")
@@ -75,6 +75,7 @@ class SPH(Base):
         SettingsSingleton().set_sph("last_upload_hash", hash)
         type(self).LAST_SUCCESSFUL_UPLOAD = datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
         type(self).LAST_STATUS = "OK"
+        return True
     
     def _report_sph_error(self, text, result):
         logger.error("%s: %s (code: %s)" % (text, result[1], result[0]))

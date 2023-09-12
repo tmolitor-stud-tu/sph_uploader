@@ -238,13 +238,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.uiStatusbar_statusbar.showMessage("Lade GPU014 hoch (%s)..." % "ausgelöst durch Timer" if force else "manuell ausgelöst")
         QtWidgets.QApplication.processEvents()          # force ui redraw and events processing
         try:
-            SPH().upload(GPU014(SettingsSingleton().get_sph("file"), set(SettingsSingleton().get_sph("filter")), SettingsSingleton()["supportedFilters"]), force)
-            self.tray_icon.showMessage(
-                "GPU014 Upload",
-                "GPU014 Upload erfolgreich",
-                QtWidgets.QSystemTrayIcon.Information,
-                4000
-            )
+            file = SettingsSingleton().get_sph("file")
+            filterset = set(SettingsSingleton().get_sph("filter"))
+            filtercode = SettingsSingleton()["supportedFilters"]
+            if SPH().upload(GPU014(file, filterset, filtercode), force):
+                self.tray_icon.showMessage(
+                    "GPU014 Upload",
+                    "GPU014 Upload erfolgreich",
+                    QtWidgets.QSystemTrayIcon.Information,
+                    4000
+                )
         except Exception as err:
             logger.exception("Exception while uploading!")
             self.tray_icon.showMessage(
@@ -277,13 +280,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.uiStatusbar_statusbar.showMessage("Lade PDFs hoch (%s)..." % "ausgelöst durch Timer" if force else "manuell ausgelöst")
         QtWidgets.QApplication.processEvents()          # force ui redraw and events processing
         try:
-            Web().upload(PDF(SettingsSingleton().get_web("dir")), force)
-            self.tray_icon.showMessage(
-                "PDF Upload",
-                "PDF Upload erfolgreich",
-                QtWidgets.QSystemTrayIcon.Information,
-                4000
-            )
+            if Web().upload(PDF(SettingsSingleton().get_web("dir")), force):
+                self.tray_icon.showMessage(
+                    "PDF Upload",
+                    "PDF Upload erfolgreich",
+                    QtWidgets.QSystemTrayIcon.Information,
+                    4000
+                )
         except Exception as err:
             logger.exception("Exception while uploading!")
             self.tray_icon.showMessage(

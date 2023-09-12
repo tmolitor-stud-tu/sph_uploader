@@ -16,12 +16,12 @@ class Web(Base):
         hash = pdf.get_hash()
         if not force and hash == SettingsSingleton().get_web("last_upload_hash"):
             logger.info("Hash of PDF files did not change and upload was not forced, doing nothing...")
-            return
+            return False
         if len(pdf.get_files()) == 0:
             logger.info("Not uploading PDF files, no files found at '%s'!" % pdf.get_dir())
             if force:
                 raise RuntimeError("Not uploading PDF files, no files found at '%s'!" % pdf.get_dir())
-            return
+            return False
         
         type(self).UPLOAD_TRIES += 1
         logger.info("Uploading PDF files: %s" % str(pdf.get_files()))
@@ -39,3 +39,4 @@ class Web(Base):
         SettingsSingleton().set_web("last_upload_hash", hash)
         type(self).LAST_SUCCESSFUL_UPLOAD = datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
         type(self).LAST_STATUS = "OK"
+        return True
