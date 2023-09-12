@@ -21,6 +21,7 @@ except FileExistsError:
 # parse commandline
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, description="SPH Uploader")
 parser.add_argument("--log", metavar='LOGLEVEL', help="Loglevel to log", default="INFO")
+parser.add_argument("--forcerun", help="Force run even if another instance is already running", action="store_true", default=False)
 args = parser.parse_args()
 
 import json, logging, logging.config
@@ -47,12 +48,12 @@ class Application(QtWidgets.QApplication):
     def __init__(self, argv, already_running):
         super().__init__(argv)
         self.socket_name = "sph_uploader_single_app_socket"
-        if not already_running:
+        if args.forcerun or not already_running:
             logger.info("We are the first launch, starting local server...")
             self.server = QtNetwork.QLocalServer(self)
             self.server.newConnection.connect(self._handle_message)
             self.server.listen(self.socket_name)
-            if not self.server.isListening():
+            if not self.server.isListening() and not args.forcerun:
                 raise RuntimeError("Could not start local server on '%s': %s" % (self.socket_name, self.server.errorString()))
         
     def send_message(self, message):
