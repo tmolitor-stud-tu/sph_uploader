@@ -92,6 +92,7 @@ try:
     lockfile = QtCore.QLockFile(os.path.join(paths.user_data_dir(), "lockfile.lock"))
     already_running = not lockfile.tryLock(100)
     app = Application(sys.argv, already_running)
+    app.setQuitOnLastWindowClosed(False) 
     if not already_running:
         logger.info("Application not running, starting up gui...")
         
@@ -101,7 +102,7 @@ try:
         tray_icon = TrayIcon(window)
         window.tray_icon = tray_icon
         tray_icon.show()
-        # show and hide again to properly initialize it (we get an empty window otherwise)
+        # show and hide again to properly initialize it (we sometimes get an empty window otherwise)
         window.show()
         window.hide()
         
@@ -116,4 +117,5 @@ except Exception as err:
 except:
     logger.exception("Catched unknown top level exception!")
     QtWidgets.QMessageBox.critical(None, "Fatal Top-Level Error!", "Catched unknown top level exception!")
+logger.info("Now exiting application...")
 sys.exit(0)
