@@ -2,7 +2,7 @@
 
 cd "$(dirname "$0")"
 
-pyinstaller --log-level DEBUG --name "sph_uploader" --add-data conf:conf --add-data ui/*.ui:ui --add-data ../art/icon.png:art --splash ../art/splash.png --specpath src --windowed --icon ../art/icon.png --onefile src/main.py 
+pyinstaller --log-level DEBUG --name "sph_uploader" --add-data "data:data" --add-data "ui/*.ui:ui" --splash data/art/splash.png --specpath src --windowed --icon data/art/icon.png --onefile src/main.py 
 
 # spec is now removed from repo
 # # fix icon definition in spec (needed for windows build)

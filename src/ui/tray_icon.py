@@ -14,9 +14,8 @@ class TrayIcon(QtWidgets.QSystemTrayIcon):
         self.main_window = main_window
         
         # create tray icon and menu
-        icon_path = os.path.join(paths.get_art_path(), "icon.png")
-        logger.info("Loading tray icon at '%s'..." % icon_path)
-        icon = QtGui.QIcon(icon_path)
+        logger.info("Loading tray icon at '%s'..." % paths.get_art_filepath("icon.png"))
+        icon = QtGui.QIcon(paths.get_art_filepath("icon.png"))
         logger.debug("Icon: %s" % str(icon))
         self.setIcon(icon)
         self.tray_menu = QtWidgets.QMenu()

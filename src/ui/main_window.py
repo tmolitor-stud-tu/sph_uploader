@@ -19,8 +19,10 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
         
         # load qt ui definition file from same directory and named exactly like this file, but having extension ".ui"
-        uic.loadUi(os.path.join(os.path.dirname(__file__), os.path.splitext(__file__)[0]+".ui"), self)
-        self.setWindowIcon(QtGui.QIcon(os.path.join(paths.get_art_path(), "icon.png")))
+        uifile = paths.get_ui_filepath(os.path.splitext(os.path.basename(__file__))[0]+".ui")
+        logger.debug("Loading ui file located at: '%s'..." % uifile)
+        uic.loadUi(uifile, self)
+        self.setWindowIcon(QtGui.QIcon(paths.get_art_filepath("icon.png")))
         
         # load ui state
         SettingsSingleton().restore_geometry(self)

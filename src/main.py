@@ -14,7 +14,7 @@ logger_config_file = os.path.join(paths.user_data_dir(), "logger.json")
 os.makedirs(paths.user_data_dir(), exist_ok=True)
 os.makedirs(paths.user_log_dir(), exist_ok=True)
 try:
-    shutil.copy2(os.path.join(os.path.dirname(__file__), "conf", "logger.json"), logger_config_file)
+    shutil.copy2(os.path.join(paths.get_basedir_path(), "data", "conf", "logger.json"), logger_config_file)
 except FileExistsError:
     pass
 
@@ -93,7 +93,7 @@ try:
     already_running = not lockfile.tryLock(100)
     app = Application(sys.argv, already_running)
     app.setQuitOnLastWindowClosed(False) 
-    if not already_running:
+    if not already_running or args.forcerun:
         logger.info("Application not running, starting up gui...")
         
         # initialize gui
