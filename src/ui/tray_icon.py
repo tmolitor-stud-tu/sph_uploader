@@ -56,7 +56,7 @@ class TrayIcon(QtWidgets.QSystemTrayIcon):
     def action_hide_show(self, *args):
         if self.main_window.isVisible():
             logger.info("Closing main window...")
-            self.main_window.hide()
+            self.main_window.close()
         else:
             logger.info("Showing main window...")
             self.main_window.showNormal()       # used instead of show() to make sure this will be opened in the foreground
