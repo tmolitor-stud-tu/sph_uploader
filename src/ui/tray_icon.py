@@ -1,4 +1,5 @@
 import os
+import platform
 from PyQt5 import QtWidgets, QtGui
 
 from .about_dialog import AboutDialog
@@ -16,7 +17,6 @@ class TrayIcon(QtWidgets.QSystemTrayIcon):
         # create tray icon and menu
         logger.info("Loading tray icon at '%s'..." % paths.get_art_filepath("icon.png"))
         icon = QtGui.QIcon(paths.get_art_filepath("icon.png"))
-        logger.debug("Icon: %s" % str(icon))
         self.setIcon(icon)
         self.tray_menu = QtWidgets.QMenu()
         self.uiAction_hideShow = QtWidgets.QAction("dummy_text", self)
@@ -34,7 +34,9 @@ class TrayIcon(QtWidgets.QSystemTrayIcon):
         self.uiAction_hideShow.triggered.connect(self.action_hide_show)
         self.uiAction_about.triggered.connect(self.action_about)
         self.uiAction_quit.triggered.connect(self.action_quit)
-        self.activated.connect(self.action_show)
+        # macos always shows the context menu, even on left click --> just don't show window on left click
+        if platform.system() != "Darwin":
+            self.activated.connect(self.action_show)
         self.messageClicked.connect(lambda *args: self.action_show(QtWidgets.QSystemTrayIcon.ActivationReason.Trigger))
         
         # intialize menu state
@@ -47,9 +49,12 @@ class TrayIcon(QtWidgets.QSystemTrayIcon):
             QtWidgets.QSystemTrayIcon.Information,
             4000
         )
+        
+        self.installEventFilter(self)
     
     @catch_exceptions(logger=logger)
     def action_show(self, trigger):
+        logger.debug("Tray trigger: %d" % trigger)
         if trigger != QtWidgets.QSystemTrayIcon.ActivationReason.Trigger:
             logger.debug("Tray trigger wrong: %d" % trigger)
             return
