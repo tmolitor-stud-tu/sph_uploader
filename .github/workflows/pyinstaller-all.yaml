@@ -39,6 +39,7 @@ jobs:
           - os: ubuntu-latest
             TARGET: linux
             CMD_BUILD: >
+                sudo apt install plasma-integration -y &&
                 pyinstaller --clean --log-level DEBUG --name "sph_uploader" --add-data "data:data" --add-data "ui/*.ui:ui" --splash data/art/splash.png --specpath src --windowed --icon data/art/icon.png --onefile --debug bootloader src/main.py
             OUT_FILE_NAME: sph_uploader
             ASSET_MIME: application/x-executable
