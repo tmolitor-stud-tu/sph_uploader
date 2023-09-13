@@ -43,21 +43,6 @@ class SPH(Base):
         logger.info("Locking successful...")
 
         logger.info("Uploading Vertretungsplan...")
-        logger.debug("Uploading bytes: %s" % bytes(data, "ISO-8859-1"))
-        with io.BytesIO(bytes(data, "ISO-8859-1")) as fp:
-            logger.debug("Read from bytesio: %s" % fp.read(1048000))
-        data = """Datum;Stunde;AbsenterLehrer;VertretenderLehrer;Fach;Vertretungsfach;Raum;Vertretungsraum;Klassen;TextZurVertretung;Vertretungsklassen;Art;Vertretungsart;LetzteAenderung
-20230913;4;HEL;EL;WPU;;Reli;Reli;07C~08C;;07C~08C;;;202309120715
-20230913;1;HEL;RE;;;;;;;;17;B;202309120714
-20230914;1;SH;;E12ge.11;;KP12;;E12;eigenst. Arbeiten;E12;0,21;C;202309131010
-20230914;2;SH;;E12ge.11;;KP12;;E12;eigenst. Arbeiten;E12;0,21;C;202309131010
-20230914;3;SH;;Bereit;;;;;;;21;;202309131007
-20230914;5;SH;;Q12gbio.23;;BUE;;Q12;eigenst. Arbeiten;Q12;0,21;C;202309131010
-20230914;6;SH;;Q12gbio.23;;BUE;;Q12;eigenst. Arbeiten;Q12;0,21;C;202309131010
-20230914;3;SH;BOE;;;;;;;;17,21;B;202309131009
-20230914;5;FÖ;LÖL;RKA;;MW26;MW26;05A~05B~05C;;05A~05B~05C;21;;202309131413
-20230914;7;WIN;BER;Kl-St;;MW23;MW23;10B;;10B;21;;202309131434
-"""
         response = requests.post(SettingsSingleton().get_sph("url"), data={
             "i": SettingsSingleton().get_sph("schulid"),
             "c": SettingsSingleton().get_sph("uploadKey"),
