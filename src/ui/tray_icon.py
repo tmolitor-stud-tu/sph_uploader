@@ -50,12 +50,7 @@ class TrayIcon(QtWidgets.QSystemTrayIcon):
         if trigger != QtWidgets.QSystemTrayIcon.ActivationReason.Trigger:
             logger.debug("Tray trigger wrong: %d" % trigger)
             return
-        if self.main_window.isVisible():
-            logger.debug("Main window already visible...")
-            return
-        logger.info("Showing main window...")
-        self.main_window.showNormal()       # used instead of show() to make sure this will be opened in the foreground
-        self.update_menu()
+        self.action_hide_show()
     
     @catch_exceptions(logger=logger)
     def action_hide_show(self, *args):
