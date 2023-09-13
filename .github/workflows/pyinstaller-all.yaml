@@ -38,6 +38,10 @@ jobs:
             ASSET_MIME: application/vnd.microsoft.portable-executable
           - os: ubuntu-latest
             TARGET: linux
+                #sudo apt install plasma-integration -y &&
+                #sudo cp -av /usr/lib/x86_64-linux-gnu/qt5/plugins/platformthemes/KDEPlasmaPlatformTheme.so /opt/hostedtoolcache/Python/3.11.5/x64/lib/python3.11/site-packages/PyQt5/Qt5/plugins/platformthemes/ -f &&
+                #--add-binary "/usr/lib/x86_64-linux-gnu/qt5/plugins/platformthemes/KDEPlasmaPlatformTheme.so:PyQt5/Qt5/plugins/platformthemes"
+                #--add-binary "/lib/x86_64-linux-gnu/libz.so.1:."
             CMD_BUILD: >
                 pyinstaller --clean --log-level DEBUG --name "sph_uploader" --add-data "data:data" --add-data "ui/*.ui:ui" --splash data/art/splash.png --specpath src --windowed --icon data/art/icon.png --onefile --debug bootloader src/main.py
             OUT_FILE_NAME: sph_uploader
@@ -57,7 +61,7 @@ jobs:
         pip install --upgrade Pillow
         pip install --upgrade tk
         pip install --upgrade tcl
-        pip install --upgrade -r src/requirements.txt    
+        pip install --upgrade -r src/requirements.txt
     - name: Extract version string
       run: echo "VERSION='${{ github.ref_name }}'" >src/utils/version.py
     - name: Build with pyinstaller for ${{matrix.TARGET}}
