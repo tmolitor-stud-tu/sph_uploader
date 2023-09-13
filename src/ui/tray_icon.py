@@ -14,7 +14,11 @@ class TrayIcon(QtWidgets.QSystemTrayIcon):
         self.main_window = main_window
         
         # create tray icon and menu
-        self.setIcon(QtGui.QIcon(os.path.join(paths.get_art_path(), "icon.png")))
+        icon_path = os.path.join(paths.get_art_path(), "icon.png")
+        logger.info("Loading tray icon at '%s'..." % icon_path)
+        icon = QtGui.QIcon(icon_path)
+        logger.debug("Icon: %s" % str(icon))
+        self.setIcon(icon)
         self.tray_menu = QtWidgets.QMenu()
         self.uiAction_hideShow = QtWidgets.QAction("dummy_text", self)
         self.tray_menu.addAction(self.uiAction_hideShow)
