@@ -43,6 +43,9 @@ class SPH(Base):
         logger.info("Locking successful...")
 
         logger.info("Uploading Vertretungsplan...")
+        logger.debug("Uploading bytes: %s" % bytes(data, "ISO-8859-1"))
+        with io.BytesIO(bytes(data, "ISO-8859-1")) as fp:
+            logger.debug("Read from bytesio: %s" % fp.read(1048000))
         response = requests.post(SettingsSingleton().get_sph("url"), data={
             "i": SettingsSingleton().get_sph("schulid"),
             "c": SettingsSingleton().get_sph("uploadKey"),
