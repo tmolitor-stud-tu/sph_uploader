@@ -100,6 +100,10 @@ try:
         window = MainWindow(app)
         tray_icon = TrayIcon(window)
         window.tray_icon = tray_icon
+        tray_icon.show()
+        # show and hide again to properly initialize it (we get an empty window otherwise)
+        window.show()
+        window.hide()
         
         # run qt mainloop
         app.exec_()
