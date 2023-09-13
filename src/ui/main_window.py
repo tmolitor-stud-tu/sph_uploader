@@ -25,6 +25,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowIcon(QtGui.QIcon(paths.get_art_filepath("icon.png")))
         
         # load ui state
+        self.setFixedSize(self.size())
         SettingsSingleton().restore_geometry(self)
         SettingsSingleton().restore_state(self)
         tabIndex = SettingsSingleton()[widget_name(self.uiTabWidget_mainTabs)]

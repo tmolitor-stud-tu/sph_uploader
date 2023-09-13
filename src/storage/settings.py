@@ -32,7 +32,6 @@ INITIAL_VALUES = {
         "last_upload_hash": "",                                                 # this is not exposed in the ui
     },
     "misc": {
-        "mainTabIndex": 0,
         "supportedFilters": {
             "Freistellungen": "row[19] == \"L\"",
         },

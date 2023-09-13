@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>652</width>
-    <height>392</height>
+    <width>752</width>
+    <height>404</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -43,28 +43,28 @@
         <string>SPH-Upload</string>
        </attribute>
        <layout class="QFormLayout" name="formLayout">
-        <item row="0" column="0">
+        <item row="1" column="0">
          <widget class="QLabel" name="label_10">
           <property name="text">
            <string>Auto-Upload:</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
+        <item row="1" column="1">
          <widget class="QCheckBox" name="uiCheckBox_sphEnabled">
           <property name="text">
            <string>Aktiv</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="2" column="0">
          <widget class="QLabel" name="label_2">
           <property name="text">
            <string>Schulnummer:</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="2" column="1">
          <widget class="QSpinBox" name="uiSpinBox_sphSchulid">
           <property name="minimum">
            <number>1</number>
@@ -74,24 +74,31 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
+        <item row="3" column="0">
          <widget class="QLabel" name="label">
           <property name="text">
            <string>Upload-Key:</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="uiLineEdit_sphUploadKey"/>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="uiLineEdit_sphUploadKey">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
         </item>
-        <item row="3" column="0">
+        <item row="4" column="0">
          <widget class="QLabel" name="label_12">
           <property name="text">
            <string>Datei:</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
+        <item row="4" column="1">
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="spacing">
            <number>0</number>
@@ -101,6 +108,12 @@
           </property>
           <item>
            <widget class="QLineEdit" name="uiLineEdit_sphFile">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
@@ -115,17 +128,17 @@
           </item>
          </layout>
         </item>
-        <item row="4" column="0">
+        <item row="5" column="0">
          <widget class="QLabel" name="label_4">
           <property name="text">
            <string>Filter:</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
+        <item row="5" column="1">
          <widget class="QListWidget" name="uiListWidget_sphFilter">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -150,7 +163,7 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="0">
+        <item row="6" column="0">
          <widget class="QLabel" name="label_9">
           <property name="text">
            <string>Auto-Upload
@@ -158,7 +171,7 @@ bei Veränderung:</string>
           </property>
          </widget>
         </item>
-        <item row="5" column="1">
+        <item row="6" column="1">
          <widget class="QSpinBox" name="uiSpinBox_sphInterval">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -180,7 +193,7 @@ bei Veränderung:</string>
           </property>
          </widget>
         </item>
-        <item row="6" column="1">
+        <item row="7" column="1">
          <widget class="QCommandLinkButton" name="uiButton_sphForceUpload">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
@@ -192,6 +205,32 @@ bei Veränderung:</string>
            <string>Upload jetzt erzwingen  </string>
           </property>
          </widget>
+        </item>
+        <item row="0" column="1">
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="8" column="1">
+         <spacer name="verticalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </widget>
@@ -222,7 +261,14 @@ bei Veränderung:</string>
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QLineEdit" name="uiLineEdit_webUrl"/>
+         <widget class="QLineEdit" name="uiLineEdit_webUrl">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
         </item>
         <item row="3" column="0">
          <widget class="QLabel" name="label_14">
@@ -232,7 +278,14 @@ bei Veränderung:</string>
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QLineEdit" name="uiLineEdit_webSecret"/>
+         <widget class="QLineEdit" name="uiLineEdit_webSecret">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
         </item>
         <item row="4" column="0">
          <widget class="QLabel" name="label_15">
@@ -251,6 +304,12 @@ bei Veränderung:</string>
           </property>
           <item>
            <widget class="QLineEdit" name="uiLineEdit_webDir">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
@@ -346,6 +405,9 @@ bei Veränderung:</string>
           <property name="title">
            <string>SPH</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <layout class="QFormLayout" name="formLayout_4">
            <item row="0" column="0">
             <widget class="QLabel" name="label_20">
@@ -402,6 +464,9 @@ bei Veränderung:</string>
           </property>
           <property name="title">
            <string>PDF</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <layout class="QFormLayout" name="formLayout_2">
            <item row="0" column="0">
@@ -460,7 +525,7 @@ bei Veränderung:</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>652</width>
+     <width>752</width>
      <height>27</height>
     </rect>
    </property>
@@ -485,6 +550,9 @@ bei Veränderung:</string>
    <property name="text">
     <string>Fenster Schließen</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
   </action>
   <action name="action_ber">
    <property name="text">
@@ -495,10 +563,16 @@ bei Veränderung:</string>
    <property name="text">
     <string>Über</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
   </action>
   <action name="uiAction_quit">
    <property name="text">
     <string>Beenden</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
  </widget>

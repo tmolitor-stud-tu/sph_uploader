@@ -18,6 +18,7 @@ class AboutDialog(QtWidgets.QDialog):
         logger.debug("Loading ui file located at: '%s'..." % uifile)
         uic.loadUi(uifile, self)
         self.setWindowIcon(QtGui.QIcon(paths.get_art_filepath("icon.png")))
+        self.setFixedSize(self.size())
         
         self.uiLabel_version.setText(VERSION)
         self.uiLabel_configDir.setText(paths.user_data_dir())
