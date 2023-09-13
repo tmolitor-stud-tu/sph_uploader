@@ -22,7 +22,7 @@ jobs:
             #--volicon "Hello World.icns" \
             # for the dmg stuff, see https://www.pythonguis.com/tutorials/packaging-pyqt5-applications-pyinstaller-macos-dmg/
             CMD_BUILD: >
-                pyinstaller --clean --log-level DEBUG --name "sph_uploader" --add-data conf:conf --add-data ui/*.ui:ui --add-data ../art/icon.png:art --specpath src --windowed --icon ../art/icon.png --onefile --argv-emulation src/main.py &&
+                pyinstaller --clean --log-level DEBUG --name "sph_uploader" --add-data conf:conf --add-data ui/*.ui:ui --add-data ../art/icon.png:art --specpath src --windowed --icon ../art/icon.png --onefile --debug bootloader --argv-emulation src/main.py &&
                 cd dist/ &&
                 zip -r9 sph_uploader sph_uploader.app/ &&
                 brew install create-dmg &&
@@ -33,13 +33,13 @@ jobs:
             ASSET_MIME: application/binary
           - os: windows-latest
             TARGET: windows
-            CMD_BUILD: pyinstaller --clean --log-level DEBUG --name "sph_uploader" --add-data "conf;conf" --add-data "ui/*.ui;ui" --add-data "../art/icon.png;art" --splash ../art/splash.png --specpath src --windowed --icon ../art/icon.png --onefile src/main.py 
+            CMD_BUILD: pyinstaller --clean --log-level DEBUG --name "sph_uploader" --add-data "conf;conf" --add-data "ui/*.ui;ui" --add-data "../art/icon.png;art" --splash ../art/splash.png --specpath src --windowed --icon ../art/icon.png --onefile --debug bootloader src/main.py 
             OUT_FILE_NAME: sph_uploader.exe
             ASSET_MIME: application/vnd.microsoft.portable-executable
           - os: ubuntu-latest
             TARGET: linux
             CMD_BUILD: >
-                pyinstaller --clean --log-level DEBUG --name "sph_uploader" --add-data conf:conf --add-data ui/*.ui:ui --add-data ../art/icon.png:art --splash ../art/splash.png --specpath src --windowed --icon ../art/icon.png --onefile src/main.py
+                pyinstaller --clean --log-level DEBUG --name "sph_uploader" --add-data conf:conf --add-data ui/*.ui:ui --add-data ../art/icon.png:art --splash ../art/splash.png --specpath src --windowed --icon ../art/icon.png --onefile --debug bootloader src/main.py
             OUT_FILE_NAME: sph_uploader
             ASSET_MIME: application/x-executable
     steps:
@@ -56,7 +56,10 @@ jobs:
         pip install --upgrade pyinstaller-hooks-contrib
         pip install --upgrade Pillow
         pip install --upgrade tk
-        pip install --upgrade -r src/requirements.txt        
+        pip install --upgrade tcl
+        pip install --upgrade -r src/requirements.txt    
+    - name: Extract version string
+      run: echo "VERSION='${{ github.ref_name }}'" >src/utils/version.py
     - name: Build with pyinstaller for ${{matrix.TARGET}}
       run: ${{matrix.CMD_BUILD}}
     - uses: actions/upload-artifact@v3

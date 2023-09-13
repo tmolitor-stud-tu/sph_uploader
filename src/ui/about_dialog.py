@@ -3,7 +3,7 @@ import os
 import platformdirs
 from PyQt5 import QtWidgets, uic, QtGui
 
-from utils import catch_exceptions, paths
+from utils import catch_exceptions, paths, VERSION
 
 import logging
 logger = logging.getLogger(__name__)
@@ -17,5 +17,6 @@ class AboutDialog(QtWidgets.QDialog):
         uic.loadUi(os.path.join(os.path.dirname(__file__), os.path.splitext(__file__)[0]+".ui"), self)
         self.setWindowIcon(QtGui.QIcon(os.path.join(paths.get_art_path(), "icon.png")))
         
+        self.uiLabel_version.setText(VERSION)
         self.uiLabel_configDir.setText(paths.user_data_dir())
         self.uiLabel_loggerDir.setText(paths.user_log_dir())
