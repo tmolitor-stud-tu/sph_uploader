@@ -59,7 +59,7 @@ jobs:
         pip install --upgrade -r src/requirements.txt        
     - name: Build with pyinstaller for ${{matrix.TARGET}}
       run: ${{matrix.CMD_BUILD}}
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: ${{ matrix.OUT_FILE_NAME}}
         path: ./dist/${{ matrix.OUT_FILE_NAME}} # or path/to/artifact
