@@ -81,7 +81,7 @@ if(isset($_GET['id']) && is_numeric($_GET['id']))
 					if(page !== null)
 						pages.push(page);
 					i++;
-				} while(i < 4);
+				} while(i < 16);
 				console.log("every pdf loaded...");
 				
 				//flip pages every 20 seconds
