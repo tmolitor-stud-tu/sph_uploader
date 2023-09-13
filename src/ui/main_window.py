@@ -93,9 +93,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def closeEvent(self, event):
         logger.info("Closing main window...")
         self._closing()
-        self.hide()     # needed for isHidden() and isVisible() to return correct values
+        self.hide()
         self.tray_icon.update_menu()
-        QtWidgets.QMainWindow.closeEvent(self, event)
+        event.ignore()
     
     @catch_exceptions(logger=logger)
     def window_resized(self, *args):
