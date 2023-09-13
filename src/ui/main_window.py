@@ -235,7 +235,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.sph_timer.stop()
     
     def _trigger_sph_upload(self, force=False):
-        self.uiStatusbar_statusbar.showMessage("Lade GPU014 hoch (%s)..." % "ausgelöst durch Timer" if force else "manuell ausgelöst")
+        self.uiStatusbar_statusbar.showMessage("Lade GPU014 hoch (%s)..." % "ausgelöst durch Timer" if not force else "manuell ausgelöst")
         QtWidgets.QApplication.processEvents()          # force ui redraw and events processing
         try:
             file = SettingsSingleton().get_sph("file")
@@ -258,7 +258,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             QtWidgets.QMessageBox.warning(None, str(type(err).__name__), str(err))
         self.uiStatusbar_statusbar.showMessage("")
-        self._update_web_stats()
+        self._update_sph_stats()
     
     def _update_sph_stats(self):
         stats = SPH.get_stats()
@@ -277,7 +277,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.web_timer.stop()
     
     def _trigger_web_upload(self, force=False):
-        self.uiStatusbar_statusbar.showMessage("Lade PDFs hoch (%s)..." % "ausgelöst durch Timer" if force else "manuell ausgelöst")
+        self.uiStatusbar_statusbar.showMessage("Lade PDFs hoch (%s)..." % "ausgelöst durch Timer" if not force else "manuell ausgelöst")
         QtWidgets.QApplication.processEvents()          # force ui redraw and events processing
         try:
             if Web().upload(PDF(SettingsSingleton().get_web("dir")), force):
