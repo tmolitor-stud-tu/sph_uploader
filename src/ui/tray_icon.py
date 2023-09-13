@@ -25,7 +25,6 @@ class TrayIcon(QtWidgets.QSystemTrayIcon):
         self.tray_menu.addAction(self.uiAction_quit)
         self.setToolTip("SPH Uploader")
         self.setContextMenu(self.tray_menu)
-        self.show()
         
         # connect menu items
         self.uiAction_hideShow.triggered.connect(self.action_hide_show)
