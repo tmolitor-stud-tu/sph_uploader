@@ -16,6 +16,8 @@ def map_art(art, arttext, row):
         ("2228224", "B"): "17,21",
         ("65536", "R"): "16",
         ("2162688", "R"): "16,21",
+        ("2097168", "L"): "4,21",
+        ("16", "L"): "4",
     }
     if (art, arttext) in ARTMAPPING:
         logger.debug("Mapping '%s' having arttext '%s' to '%s'..." % (art, arttext, ARTMAPPING[(art, arttext)]))
