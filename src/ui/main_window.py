@@ -95,7 +95,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._closing()
         self.hide()
         self.tray_icon.update_menu()
-        return False
+        event.ignore()
     
     @catch_exceptions(logger=logger)
     def window_resized(self, *args):
