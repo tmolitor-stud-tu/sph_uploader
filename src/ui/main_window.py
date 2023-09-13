@@ -1,12 +1,8 @@
-import sys
 import os
-import textwrap
-import functools
-import re
-from PyQt5 import QtWidgets, uic, QtGui, QtCore
+from PyQt5 import QtWidgets, QtGui, QtCore
 
 from .about_dialog import AboutDialog
-from utils import catch_exceptions, display_exceptions, widget_name, paths
+from utils import catch_exceptions, display_exceptions, widget_name, paths, init_ui
 from storage import SettingsSingleton, GPU014, PDF
 from net import SPH, Web
 
@@ -15,16 +11,10 @@ logger = logging.getLogger(__name__)
 
 class MainWindow(QtWidgets.QMainWindow):
     @catch_exceptions(logger=logger)
+    @init_ui        # load qt ui definition file from same directory and named exactly like this file, but having extension ".ui"
     def __init__(self, app):
-        super().__init__()
-        
-        # load qt ui definition file from same directory and named exactly like this file, but having extension ".ui"
-        uifile = paths.get_ui_filepath(os.path.splitext(os.path.basename(__file__))[0]+".ui")
-        logger.debug("Loading ui file located at: '%s'..." % uifile)
-        uic.loadUi(uifile, self)
-        self.setWindowIcon(QtGui.QIcon(paths.get_art_filepath("icon.png")))
-        
         # load ui state
+        self.setWindowIcon(QtGui.QIcon(paths.get_art_filepath("icon.png")))
         self.setFixedSize(self.size())
         SettingsSingleton().restore_geometry(self)
         SettingsSingleton().restore_state(self)
