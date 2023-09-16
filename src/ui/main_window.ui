@@ -43,6 +43,9 @@
         <string>SPH-Upload</string>
        </attribute>
        <layout class="QFormLayout" name="formLayout">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+        </property>
         <item row="1" column="0">
          <widget class="QLabel" name="label_10">
           <property name="text">
@@ -239,6 +242,9 @@ bei Veränderung:</string>
         <string>PDF-Upload</string>
        </attribute>
        <layout class="QFormLayout" name="formLayout_3">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+        </property>
         <item row="1" column="0">
          <widget class="QLabel" name="label_11">
           <property name="text">
@@ -409,6 +415,9 @@ bei Veränderung:</string>
            <set>Qt::AlignCenter</set>
           </property>
           <layout class="QFormLayout" name="formLayout_4">
+           <property name="fieldGrowthPolicy">
+            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+           </property>
            <item row="0" column="0">
             <widget class="QLabel" name="label_20">
              <property name="text">
@@ -469,6 +478,9 @@ bei Veränderung:</string>
            <set>Qt::AlignCenter</set>
           </property>
           <layout class="QFormLayout" name="formLayout_2">
+           <property name="fieldGrowthPolicy">
+            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+           </property>
            <item row="0" column="0">
             <widget class="QLabel" name="label_5">
              <property name="text">
