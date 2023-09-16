@@ -11,7 +11,7 @@ class AboutDialog(QtWidgets.QDialog):
     @init_ui        # load qt ui definition file from same directory and named exactly like this file, but having extension ".ui"
     def __init__(self):
         self.setWindowIcon(QtGui.QIcon(paths.get_art_filepath("icon.png")))
-        self.setFixedSize(self.size())
+        #self.setFixedSize(self.size())
         
         self.uiLabel_version.setText(VERSION)
         self.uiLabel_configDir.setText(paths.user_data_dir())

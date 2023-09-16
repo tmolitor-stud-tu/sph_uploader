@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>577</width>
+    <width>535</width>
     <height>215</height>
    </rect>
   </property>
@@ -34,6 +34,12 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2023 Thilo Molitor &lt;br/&gt;Project Homepage: &lt;a href=&quot;https://github.com/tmolitor-stud-tu/sph_uploader&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://github.com/tmolitor-stud-tu/sph_uploader&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;App Icon by Design Circle (&lt;a href=&quot;https://www.freepik.com/icons/public/3&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://www.freepik.com/icons/public/3&lt;/span&gt;&lt;/a&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
@@ -67,7 +73,7 @@
    <item>
     <layout class="QFormLayout" name="formLayout">
      <property name="sizeConstraint">
-      <enum>QLayout::SetDefaultConstraint</enum>
+      <enum>QLayout::SetMaximumSize</enum>
      </property>
      <property name="fieldGrowthPolicy">
       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
