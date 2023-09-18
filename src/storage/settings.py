@@ -33,7 +33,14 @@ INITIAL_VALUES = {
     },
     "misc": {
         "supportedFilters": {
-            "Freistellungen": "row[19] == \"L\"",
+            "Freistellungen": {
+                "pre-exec": "",
+                "eval": "row[19] == \"L\"",
+            },
+            "Nur zukünftige": {
+                "pre-exec": "from datetime import datetime",
+                "eval": "datetime.today().strftime(\"%Y%m%d\")",
+            },
         },
     },
     "states": {},

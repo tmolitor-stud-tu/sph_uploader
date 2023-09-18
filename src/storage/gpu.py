@@ -53,12 +53,17 @@ class GPU014:
                 ignore = False
                 for f in filter:
                     if f in filtercode:
-                        if eval(filtercode[f], {
+                        globals_dict = {
                             "true": True,
                             "false": False,
-                        }, {
+                        }
+                        locals_dict = {
                             "row": row,
-                        }) == True:
+                        }
+                        logger.debug("globals_dict after pre-exec: %s" % str(globals_dict))
+                        logger.debug("locals_dict after pre-exec: %s" % str(locals_dict))
+                        exec(filtercode[f]["pre-exec"], globals_dict, locals_dict)
+                        if eval(filtercode[f]["eval"], globals_dict, locals_dict) == True:
                             ignore = True
                             break;
                 if ignore:
