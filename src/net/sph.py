@@ -8,6 +8,8 @@ from storage import SettingsSingleton
 import logging
 logger = logging.getLogger(__name__)
 
+UPLOAD_TYPE = "untis-dif-browser"
+
 class SPH(Base):
     def __init__(self):
         pass
@@ -31,7 +33,7 @@ class SPH(Base):
         response = requests.post(SettingsSingleton().get_sph("url"), data={
             "i": SettingsSingleton().get_sph("schulid"),
             "c": SettingsSingleton().get_sph("uploadKey"),
-            "a": "untis-dif-manuell",
+            "a": UPLOAD_TYPE,
             "reset": "1",
             "upload": "1",
         })
@@ -46,7 +48,7 @@ class SPH(Base):
         response = requests.post(SettingsSingleton().get_sph("url"), data={
             "i": SettingsSingleton().get_sph("schulid"),
             "c": SettingsSingleton().get_sph("uploadKey"),
-            "a": "untis-dif-manuell",
+            "a": UPLOAD_TYPE,
             "upload": "1",
         }, files={"d": io.StringIO(data)})      # convert to ISO-8859-1 (needed by sph)
         if response.status_code != 200:
@@ -60,7 +62,7 @@ class SPH(Base):
         response = requests.post(SettingsSingleton().get_sph("url"), data={
             "i": SettingsSingleton().get_sph("schulid"),
             "c": SettingsSingleton().get_sph("uploadKey"),
-            "a": "untis-dif-manuell",
+            "a": UPLOAD_TYPE,
             "unlock": "1",
             "upload": "1",
         })
