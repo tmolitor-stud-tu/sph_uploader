@@ -80,7 +80,11 @@ class SPH(Base):
         return True
     
     def _report_sph_error(self, text, result):
-        logger.error("%s: %s (code: %s)" % (text, result[1], result[0]))
-        type(self).LAST_STATUS = "SPH Error: %s (code: %s)" % (result[1], result[0])
-        raise RuntimeError("%s: %s (code: %s)" % (text, result[1], result[0]))
-    
+        if len(result) == 2:
+            logger.error("%s: %s (code: %s)" % (text, result[1], result[0]))
+            type(self).LAST_STATUS = "SPH Error: %s (code: %s)" % (result[1], result[0])
+            raise RuntimeError("%s: %s (code: %s)" % (text, result[1], result[0]))
+        else:
+            logger.error("%s: %s" % (text, str(result)))
+            type(self).LAST_STATUS = "SPH Error: %s" % str(result)
+            raise RuntimeError("%s: %s" % (text, str(result)))
