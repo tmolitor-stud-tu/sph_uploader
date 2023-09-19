@@ -39,9 +39,10 @@ INITIAL_VALUES = {
             },
             "Nur zukünftige": {
                 "pre-exec": "from datetime import datetime",
-                "eval": "datetime.today().strftime(\"%Y%m%d\")",
+                "eval": "row[1] < datetime.today().strftime(\"%Y%m%d\")",
             },
         },
+        "log_filter_decisions": False,
     },
     "states": {},
     "geometries": {},
@@ -160,8 +161,7 @@ class SettingsSingleton:
                             self.data[category][key] = INITIAL_VALUES[category][key]
                 # supportedFilters is special (always add new filters, but don't change or remove existing ones)
                 for key in INITIAL_VALUES["misc"]["supportedFilters"]:
-                        if key not in self.data["misc"]["supportedFilters"]:
-                            self.data["misc"]["supportedFilters"][key] = INITIAL_VALUES["misc"]["supportedFilters"][key]
+                    self.data["misc"]["supportedFilters"][key] = INITIAL_VALUES["misc"]["supportedFilters"][key]
         except Exception as ex:
             logger.warn("Could not load settings.json, propagating using default data: %s" % str(ex))
             # if we couldn't load this, we use a hardcoded default dict

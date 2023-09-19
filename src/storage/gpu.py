@@ -2,6 +2,8 @@ import chardet
 import csv
 import hashlib
 
+from .settings import SettingsSingleton
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -34,10 +36,10 @@ class GPU014:
                         locals_dict = {
                             "row": row,
                         }
-                        logger.debug("globals_dict after pre-exec: %s" % str(globals_dict))
-                        logger.debug("locals_dict after pre-exec: %s" % str(locals_dict))
                         exec(filtercode[f]["pre-exec"], globals_dict, locals_dict)
                         if eval(filtercode[f]["eval"], globals_dict, locals_dict) == True:
+                            if SettingsSingleton()["log_filter_decisions"]:
+                                logger.debug("Filter '%s' ignores row: %s" % (f, str(row)))
                             ignore = True
                             break;
                 if ignore:
