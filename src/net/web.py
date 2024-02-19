@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class Web(Base):
     def __init__(self):
-        pass
+        super().__init__()
 
     def upload(self, pdf, force=False):
         hash = pdf.get_hash()

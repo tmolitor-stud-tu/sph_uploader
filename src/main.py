@@ -3,6 +3,8 @@
 import sys
 import os
 import signal
+import _thread
+import time
 import shutil
 import argparse
 from PyQt5 import QtWidgets, QtCore, QtNetwork
@@ -10,9 +12,10 @@ from PyQt5 import QtWidgets, QtCore, QtNetwork
 from utils import paths
 
 # prepare platform dirs and copy over logger.json
-logger_config_file = os.path.join(paths.user_data_dir(), "logger.json")
 os.makedirs(paths.user_data_dir(), exist_ok=True)
 os.makedirs(paths.user_log_dir(), exist_ok=True)
+os.makedirs(paths.user_cache_dir(), exist_ok=True)
+logger_config_file = os.path.join(paths.user_data_dir(), "logger.json")
 try:
     shutil.copy2(os.path.join(paths.get_basedir_path(), "data", "conf", "logger.json"), logger_config_file)
 except FileExistsError:
@@ -22,6 +25,7 @@ except FileExistsError:
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, description="SPH Uploader")
 parser.add_argument("--log", metavar='LOGLEVEL', help="Loglevel to log", default="INFO")
 parser.add_argument("--forcerun", help="Force run even if another instance is already running", action="store_true", default=False)
+parser.add_argument("--replace", help="Replace already running executable", action="store_true", default=False)
 args = parser.parse_args()
 
 import json, logging, logging.config
@@ -34,10 +38,17 @@ logging.config.dictConfig(logger_config)
 logger = logging.getLogger(__name__)
 logger.info("Logger configured via '%s', logging to '%s'..." % (logger_config_file, paths.user_log_dir()))
 
-
+app = None
+tray_icon = None
+window = None
 def sigint_handler(sig, frame):
+    global app
     logger.warning('Main thread got interrupted, shutting down...')
-    os._exit(1)
+    if app != None:
+        app.quit()
+        del app
+    #os._exit(1)
+    sys.exit(1)
 signal.signal(signal.SIGINT, sigint_handler)
 
 # needed to properly bind our signal
@@ -52,10 +63,11 @@ class Application(QtWidgets.QApplication):
             logger.info("We are the first launch, starting local server...")
             self.server = QtNetwork.QLocalServer(self)
             self.server.newConnection.connect(self._handle_message)
+            QtNetwork.QLocalServer.removeServer(self.socket_name)
             self.server.listen(self.socket_name)
             if not self.server.isListening() and not args.forcerun:
                 raise RuntimeError("Could not start local server on '%s': %s" % (self.socket_name, self.server.errorString()))
-        
+    
     def send_message(self, message):
         socket = QtNetwork.QLocalSocket(self)
         socket.connectToServer(self.socket_name, QtCore.QIODevice.WriteOnly)
@@ -90,6 +102,16 @@ except:
 try:
     # initialize qt application
     lockfile = QtCore.QLockFile(os.path.join(paths.user_data_dir(), "lockfile.lock"))
+    if args.replace:
+        logger.info("Replace requested, waiting for old application to terminate...")
+        app = Application(sys.argv, True)
+        while not lockfile.tryLock(100):
+            app.send_message("close")
+            time.sleep(0.250)
+        logger.info("Lockfile aquired now, old application did terminate...")
+        app.quit()
+        del app
+        lockfile.unlock()
     already_running = not lockfile.tryLock(100)
     app = Application(sys.argv, already_running)
     app.setQuitOnLastWindowClosed(False) 
@@ -117,5 +139,15 @@ except Exception as err:
 except:
     logger.exception("Catched unknown top level exception!")
     QtWidgets.QMessageBox.critical(None, "Fatal Top-Level Error!", "Catched unknown top level exception!")
-logger.info("Now exiting application...")
+logger.info("Main event loop returned, shutting down...")
+if tray_icon != None and tray_icon.thread:
+    try:
+        logger.info("Waiting for download thread to terminate...")
+        tray_icon.thread.requestInterruption()
+        tray_icon.thread.wait()
+        logger.info("Download thread terminated...")
+    except:
+        pass
+app.quit()
+del app
 sys.exit(0)

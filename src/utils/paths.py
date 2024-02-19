@@ -23,3 +23,6 @@ def user_data_dir():
 
 def user_log_dir():
     return platformdirs.user_log_dir(*PLATFORM_ARGS)
+
+def user_cache_dir():
+    return platformdirs.user_cache_dir(*PLATFORM_ARGS)
