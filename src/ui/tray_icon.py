@@ -1,12 +1,39 @@
 import os
 import platform
 from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot, QTimer
 
+from storage import SettingsSingleton
 from .about_dialog import AboutDialog
 from utils import catch_exceptions, paths
+from net import Github
 
 import logging
 logger = logging.getLogger(__name__)
+
+
+class DownloadWorker(QObject):
+    update_message = pyqtSignal(dict)
+    update_error = pyqtSignal(Exception)
+    
+    @catch_exceptions(logger=logger)
+    def run(self):
+        logger.info("Starting downloader thread...")
+        QThread.setTerminationEnabled(True)
+        try:
+            github = Github()
+            update_metadata = github.has_update()
+            if update_metadata != None:
+                self.update_message.emit(update_metadata)
+                if SettingsSingleton()["auto_install_updates"]:
+                    github.download_latest_release(lambda: QThread.currentThread().isInterruptionRequested())
+        except Exception as err:
+            logger.exception("Exception while downloading update!")
+            self.update_error.emit(err)
+        logger.info("Stopping downloader thread...")
+        self.deleteLater()
+        QThread.currentThread().quit()
+
 
 class TrayIcon(QtWidgets.QSystemTrayIcon):
     @catch_exceptions(logger=logger)
@@ -42,15 +69,54 @@ class TrayIcon(QtWidgets.QSystemTrayIcon):
         # intialize menu state
         self.update_menu()
         
+        # check for updates in an extra background thread to not block ui while checking/downloading
+        # see https://realpython.com/python-pyqt-qthread/#multithreading-in-pyqt-with-qthread
+        self.thread = QThread(self)
+        self.download_worker = DownloadWorker()
+        self.download_worker.moveToThread(self.thread)
+        self.thread.started.connect(self.download_worker.run)
+        #self.download_worker.finished.connect(self.download_worker.deleteLater)
+        self.thread.finished.connect(self.cleanupThread)
+        self.download_worker.update_message.connect(self.show_update_message)
+        self.download_worker.update_error.connect(self.show_update_error)
+        self.thread.start()
+        
         # show init message
         self.showMessage(
             "SPH Uploader",
-            "SPH Uploader erfolgreich initialisiert",
+            "SPH Uploader überwacht nun die konfigurierten Dateien auf Veränderungen",
             QtWidgets.QSystemTrayIcon.Information,
             4000
         )
         
         self.installEventFilter(self)
+    
+    @pyqtSlot()
+    @catch_exceptions(logger=logger)
+    def cleanupThread(self):
+        self.thread.deleteLater()
+        self.thread = None
+    
+    @pyqtSlot(dict)
+    @catch_exceptions(logger=logger)
+    def show_update_message(self, update_metadata):
+        self.showMessage(
+            "SPH Uploader Update verfügbar",
+            "Neues Release von %s verfügbar: %s" % (update_metadata["date"].strftime('%x %X'), update_metadata["version"]),
+            QtWidgets.QSystemTrayIcon.Warning,
+            10000
+        )
+    
+    @pyqtSlot(Exception)
+    @catch_exceptions(logger=logger)
+    def show_update_error(self, err):
+        self.showMessage(
+            "SPH Uploader Update Error",
+            "Konnte Update nicht herunterladen: %s" % str(err),
+            QtWidgets.QSystemTrayIcon.Warning,
+            4000
+        )
+        QtWidgets.QMessageBox.critical(None, "SPH Uploader Update Error", "Konnte Update nicht herunterladen: %s" % str(err))
     
     @catch_exceptions(logger=logger)
     def action_show(self, trigger):

@@ -78,7 +78,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def handle_message(self, message):
         if message == "show":
             logger.info("Received show message, displaying main window...")
-            self.show()
+            self.showNormal()       # used instead of show() to make sure this will be opened in the foreground
+        elif message == "close":
+            logger.warning("Got command 'close', terminating now...")
+            QtWidgets.QApplication.quit()
         else:
             logger.error("Received unsupported message: '%s'!" % message)
     

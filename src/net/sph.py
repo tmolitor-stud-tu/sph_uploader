@@ -12,7 +12,7 @@ UPLOAD_TYPE = "untis-dif-browser"
 
 class SPH(Base):
     def __init__(self):
-        pass
+        super().__init__()
     
     def upload(self, gpu, force=False):
         # read both at once to minimize race conditions

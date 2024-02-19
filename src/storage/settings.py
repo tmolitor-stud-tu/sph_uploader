@@ -43,6 +43,7 @@ INITIAL_VALUES = {
             },
         },
         "log_filter_decisions": False,
+        "auto_install_updates": True,
     },
     "states": {},
     "geometries": {},
