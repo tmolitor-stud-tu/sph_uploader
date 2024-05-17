@@ -49,7 +49,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python 3.11
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v5
       with:
         python-version: 3.11
     # requirements.txt was created using pipreqs
@@ -66,7 +66,7 @@ jobs:
       run: echo "VERSION='${{ github.ref_name }}'" >src/utils/version.py
     - name: Build with pyinstaller for ${{matrix.TARGET}}
       run: ${{matrix.CMD_BUILD}}
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.OUT_FILE_NAME}}
         path: ./dist/${{ matrix.OUT_FILE_NAME}} # or path/to/artifact
@@ -77,7 +77,7 @@ jobs:
     needs: build
     steps:
     - name: Load build artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
