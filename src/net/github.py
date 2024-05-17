@@ -1,5 +1,6 @@
 import os
 import sys
+import stat
 import requests
 from packaging import version
 import platform
@@ -58,23 +59,23 @@ class Github(Base):
             raise Exception("Bitte Update manuell von hier installieren: %s" % path)
         
         # auto-replace executable, if possible (on darwin only open dmg file)
-        if platform.system() == "Windows":
-            logger.info("Renaming currently running executable to '%s.bak' and spawn newly downloaded executable at '%s'..." % (sys.executable, sys.executable))
-            os.replace(sys.executable, "%s.bak" % sys.executable)
-            shutil.copy2(path, sys.executable)
-            cmds = [sys.executable] + sys.argv + ["--replace"]
-            subprocess.Popen(cmds, start_new_session=True)
-            logger.info("Spawned newly downloaded executable at '%s' with '--replace'..." % sys.executable)
-        elif platform.system() == "Darwin":
+        if platform.system() == "Darwin":
             logger.info("Opening newly downloaded dmg file at '%s' and showing alert to user..." % path)
             os.system("open %s" % path)
             raise Exception("Bitte Update manuell von hier installieren: %s" % path)
         else:
-            logger.info("Replacing currently running executable at '%s' and respawning..." % sys.executable)
+            logger.info("Renaming currently running executable to '%s.bak' and spawn newly downloaded executable at '%s'..." % (sys.executable, sys.executable))
+            os.replace(sys.executable, "%s.bak" % sys.executable)
             shutil.copy2(path, sys.executable)
-            cmds = [sys.executable] + sys.argv + ["--replace"]
+            try:
+                current_permissions = os.stat(sys.executable)
+                os.chmod(sys.executable, current_permissions.st_mode | stat.S_IEXEC)
+            except:
+                logger.exception("Ignoring exception while trying to make downloaded file executable:")
+            cmds = [sys.executable] + sys.argv[1:] + ["--replace"]
             logger.info("CMDs: %s" % str(cmds))
             subprocess.Popen(cmds, start_new_session=True)
+            logger.info("Spawned newly downloaded executable at '%s' with '--replace'..." % sys.executable)
     
     def get_latest_download_asset(self):
         data = self._fetch_latest_release_metadata()

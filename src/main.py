@@ -68,16 +68,22 @@ class Application(QtWidgets.QApplication):
             if not self.server.isListening() and not args.forcerun:
                 raise RuntimeError("Could not start local server on '%s': %s" % (self.socket_name, self.server.errorString()))
     
-    def send_message(self, message):
+    def send_message(self, message, ignore_error=False):
         socket = QtNetwork.QLocalSocket(self)
         socket.connectToServer(self.socket_name, QtCore.QIODevice.WriteOnly)
         if not socket.waitForConnected(1000):
-            raise RuntimeError("Failed to wait for connection on socket: %s" % socket.errorString())
+            if not ignore_error:
+                raise RuntimeError("Failed to wait for connection on socket: %s" % socket.errorString())
+            else:
+                logger.error("Failed to wait for connection on socket: %s" % socket.errorString())
         if not isinstance(message, bytes):
             message = message.encode("utf-8")
         socket.write(message)
         if not socket.waitForBytesWritten(1000):
-            raise RuntimeError("Failed to wait for bytes on socket: %s" % socket.errorString())
+            if not ignore_error:
+                raise RuntimeError("Failed to wait for bytes on socket: %s" % socket.errorString())
+            else:
+                logger.error("Failed to wait for bytes on socket: %s" % socket.errorString())
         socket.disconnectFromServer()
     
     def _handle_message(self):
@@ -106,8 +112,8 @@ try:
         logger.info("Replace requested, waiting for old application to terminate...")
         app = Application(sys.argv, True)
         while not lockfile.tryLock(100):
-            app.send_message("close")
-            time.sleep(0.250)
+            app.send_message("close", ignore_error=True)
+            time.sleep(1.1)
         logger.info("Lockfile aquired now, old application did terminate...")
         app.quit()
         del app

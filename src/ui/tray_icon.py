@@ -5,7 +5,7 @@ from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot, QTimer
 
 from storage import SettingsSingleton
 from .about_dialog import AboutDialog
-from utils import catch_exceptions, paths
+from utils import catch_exceptions, paths, VERSION
 from net import Github
 
 import logging
@@ -53,7 +53,7 @@ class TrayIcon(QtWidgets.QSystemTrayIcon):
         self.tray_menu.addSeparator()
         self.uiAction_quit = QtWidgets.QAction(self.main_window.style().standardIcon(QtWidgets.QStyle.SP_TitleBarCloseButton), "Beenden", self)
         self.tray_menu.addAction(self.uiAction_quit)
-        self.setToolTip("SPH Uploader")
+        self.setToolTip(f"SPH Uploader v{VERSION}")
         self.setContextMenu(self.tray_menu)
         self.setVisible(True)
         
@@ -84,7 +84,7 @@ class TrayIcon(QtWidgets.QSystemTrayIcon):
         # show init message
         self.showMessage(
             "SPH Uploader",
-            "SPH Uploader überwacht nun die konfigurierten Dateien auf Veränderungen",
+            f"SPH Uploader v{VERSION} überwacht nun die konfigurierten Dateien auf Veränderungen",
             QtWidgets.QSystemTrayIcon.Information,
             4000
         )

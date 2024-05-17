@@ -66,10 +66,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.uiButton_webForceUpload.clicked.connect(self.web_force_upload)
         
         self.resizeEvent = self.window_resized
-    
+        
         # create timer
         self._configure_sph_timer()
         self._configure_web_timer()
+        self.closeTimer = QtCore.QTimer()
+        self.closeTimer.timeout.connect(QtWidgets.QApplication.quit)
         
         # handle app messages (single app mode)
         app.messageAvailable.connect(self.handle_message)
@@ -80,8 +82,10 @@ class MainWindow(QtWidgets.QMainWindow):
             logger.info("Received show message, displaying main window...")
             self.showNormal()       # used instead of show() to make sure this will be opened in the foreground
         elif message == "close":
-            logger.warning("Got command 'close', terminating now...")
-            QtWidgets.QApplication.quit()
+            logger.warning("Got command 'close', terminating in one second...")
+            # using a timer to make sure the message handling code in main.py runs to its end before terminating this app
+            if not self.closeTimer.isActive():
+                self.closeTimer.start(1000)
         else:
             logger.error("Received unsupported message: '%s'!" % message)
     
